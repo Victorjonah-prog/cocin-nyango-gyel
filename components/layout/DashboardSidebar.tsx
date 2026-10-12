@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Megaphone,
@@ -14,18 +14,31 @@ import {
 } from "lucide-react";
 import { siteConfig, LOGO_PATH } from "@/lib/site";
 import { cn } from "@/lib/utils";
+import { createClient } from "@/lib/supabase/client";
 
 const dashboardNav = [
-  { label: "Overview",      href: "/dashboard",              icon: LayoutDashboard },
-  { label: "Announcements", href: "/dashboard/announcements",icon: Megaphone },
-  { label: "Events",        href: "/dashboard/events",       icon: CalendarDays },
-  { label: "Projects",      href: "/dashboard/projects",     icon: FolderKanban },
-  { label: "Members",       href: "/dashboard/members",      icon: Users },
-  { label: "Giving",        href: "/dashboard/giving",       icon: Heart },
+  { label: "Overview",      href: "/dashboard",               icon: LayoutDashboard },
+  { label: "Announcements", href: "/dashboard/announcements", icon: Megaphone },
+  { label: "Events",        href: "/dashboard/events",        icon: CalendarDays },
+  { label: "Projects",      href: "/dashboard/projects",      icon: FolderKanban },
+  { label: "Members",       href: "/dashboard/members",       icon: Users },
+  { label: "Giving",        href: "/dashboard/giving",        icon: Heart },
 ];
 
-export default function DashboardSidebar() {
+interface Props {
+  displayName: string;
+  displayRole: string;
+}
+
+export default function DashboardSidebar({ displayName, displayRole }: Props) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  async function handleSignOut() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
+  }
 
   return (
     <aside
@@ -34,7 +47,6 @@ export default function DashboardSidebar() {
     >
       {/* ── Brand ── */}
       <div className="flex items-center gap-3 px-6 py-5 border-b border-white/10">
-        {/* Off-white badge keeps the dark logo visible on the navy sidebar */}
         <span className="flex items-center justify-center w-10 h-10 rounded-full bg-white/90 overflow-hidden shrink-0">
           <Image
             src={LOGO_PATH}
@@ -49,6 +61,12 @@ export default function DashboardSidebar() {
           COCIN{" "}
           <span className="text-[var(--color-gold)]">Nyango Gyel</span>
         </span>
+      </div>
+
+      {/* ── Signed-in user ── */}
+      <div className="px-6 py-4 border-b border-white/10">
+        <p className="text-sm font-semibold text-white truncate">{displayName}</p>
+        <p className="text-xs text-[var(--color-gold)] mt-0.5">{displayRole}</p>
       </div>
 
       {/* ── Nav links ── */}
@@ -79,6 +97,7 @@ export default function DashboardSidebar() {
       <div className="px-3 pb-6 border-t border-white/10 pt-4">
         <button
           type="button"
+          onClick={handleSignOut}
           className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-sm font-medium text-white/60 hover:bg-white/10 hover:text-white transition-colors duration-150 min-h-[48px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-gold)]"
         >
           <LogOut size={18} aria-hidden="true" className="shrink-0" />

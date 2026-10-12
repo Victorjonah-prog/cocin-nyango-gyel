@@ -1,23 +1,34 @@
 "use client";
 
 import { useActionState } from "react";
+import { useSearchParams } from "next/navigation";
 import { loginAction, type LoginState } from "./actions";
 
 const initial: LoginState = null;
 
 export default function LoginForm() {
   const [state, action, pending] = useActionState(loginAction, initial);
+  const searchParams = useSearchParams();
+
+  // ?error=access is set when the dashboard layout kicks an authenticated
+  // but unauthorised user back to /login after signing them out.
+  const urlError =
+    searchParams.get("error") === "access"
+      ? "You do not have access to this portal. Please contact the church administrator."
+      : null;
+
+  const displayError = state?.error ?? urlError;
 
   return (
     <form action={action} className="space-y-5" aria-label="Sign in form" noValidate>
       {/* Global error banner */}
-      {state?.error && (
+      {displayError && (
         <div
           role="alert"
           aria-live="assertive"
           className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700 font-medium"
         >
-          {state.error}
+          {displayError}
         </div>
       )}
 

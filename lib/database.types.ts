@@ -1,6 +1,7 @@
 /**
  * Minimal hand-written Database type matching the existing Supabase schema.
- * Covers only the tables used by this app; extend as new tables are added.
+ * Must be structurally compatible with @supabase/supabase-js GenericSchema
+ * so that typed query builders work correctly.
  */
 export type Json =
   | string
@@ -46,6 +47,7 @@ export interface Database {
           published?: boolean;
           updated_at?: string;
         };
+        Relationships: [];
       };
       events: {
         Row: {
@@ -86,6 +88,7 @@ export interface Database {
           published?: boolean;
           updated_at?: string;
         };
+        Relationships: [];
       };
       projects: {
         Row: {
@@ -123,6 +126,27 @@ export interface Database {
           published?: boolean;
           updated_at?: string;
         };
+        Relationships: [];
+      };
+      profiles: {
+        Row: {
+          id: string;           // matches auth.users.id
+          full_name: string | null;
+          role: string | null;  // "admin" | "secretary"
+          created_at: string;
+        };
+        Insert: {
+          id: string;
+          full_name?: string | null;
+          role?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          full_name?: string | null;
+          role?: string | null;
+        };
+        Relationships: [];
       };
     };
     Views: Record<string, never>;
@@ -136,3 +160,4 @@ export type AnnouncementRow =
   Database["public"]["Tables"]["announcements"]["Row"];
 export type EventRow = Database["public"]["Tables"]["events"]["Row"];
 export type ProjectRow = Database["public"]["Tables"]["projects"]["Row"];
+export type ProfileRow = Database["public"]["Tables"]["profiles"]["Row"];

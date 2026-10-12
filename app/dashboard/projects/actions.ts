@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createServerClient } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/server";
 import { projectSchema, type ProjectFormData } from "@/lib/schemas";
 
 function ok(message: string) {
@@ -23,7 +23,7 @@ export async function saveProject(id: string | null, data: ProjectFormData) {
     return err(parsed.error.errors[0]?.message ?? "Validation failed");
   }
 
-  const db = createServerClient();
+  const db = await createClient();
   const payload = {
     title: parsed.data.title,
     description: parsed.data.description || null,
@@ -51,7 +51,7 @@ export async function saveProject(id: string | null, data: ProjectFormData) {
 }
 
 export async function deleteProject(id: string) {
-  const db = createServerClient();
+  const db = await createClient();
   const { error } = await db.from("projects").delete().eq("id", id);
   if (error) return err("Could not delete. Please try again.");
   revalidateProjects();

@@ -1,13 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createServerClient } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/server";
 import {
   announcementSchema,
   type AnnouncementFormData,
 } from "@/lib/schemas";
-
-// ── helpers ───────────────────────────────────────────────────────────────────
 
 function ok(message: string) {
   return { success: true as const, message };
@@ -22,8 +20,6 @@ function revalidateAnnouncements() {
   revalidatePath("/dashboard/announcements");
 }
 
-// ── actions ───────────────────────────────────────────────────────────────────
-
 export async function saveAnnouncement(
   id: string | null,
   data: AnnouncementFormData
@@ -33,7 +29,7 @@ export async function saveAnnouncement(
     return err(parsed.error.errors[0]?.message ?? "Validation failed");
   }
 
-  const db = createServerClient();
+  const db = await createClient();
   const payload = {
     title: parsed.data.title,
     excerpt: parsed.data.excerpt || null,
@@ -67,7 +63,7 @@ export async function saveAnnouncement(
 }
 
 export async function deleteAnnouncement(id: string) {
-  const db = createServerClient();
+  const db = await createClient();
   const { error } = await db.from("announcements").delete().eq("id", id);
   if (error) return err("Could not delete. Please try again.");
   revalidateAnnouncements();
