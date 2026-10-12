@@ -48,7 +48,7 @@ export default function EventForm({ initial }: Props) {
   const [imageUrl, setImageUrl] = useState<string | null>(
     initial?.image_url ?? null
   );
-  const [published, setPublished] = useState(initial?.published ?? false);
+  const [published, setPublished] = useState(initial?.is_published ?? false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   function validate() {
@@ -81,7 +81,7 @@ export default function EventForm({ initial }: Props) {
         starts_at: startsAt,
         ends_at: endsAt,
         image_url: imageUrl,
-        published,
+        is_published: published,
       });
       setResult(res);
       if (res.success) {

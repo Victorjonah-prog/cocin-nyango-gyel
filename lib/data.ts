@@ -1,11 +1,8 @@
 /**
  * lib/data.ts — live Supabase data helpers for public pages.
  *
- * All functions use the shared browser/server client (publishable key).
- * They return only published rows, so no sensitive drafts leak.
- *
- * Return shapes mirror the old mock-data interfaces closely so the
- * calling components need minimal edits.
+ * Uses the shared anon client (publishable key, no session).
+ * Only published rows are returned — no drafts leak to the public.
  */
 
 import { supabase } from "./supabase";
@@ -15,17 +12,14 @@ import type { AnnouncementRow, EventRow, ProjectRow } from "./database.types";
 
 export type { AnnouncementRow };
 
-/**
- * Returns all published announcements, newest first.
- * At most `limit` rows (default: all).
- */
+/** Returns published announcements, newest first. */
 export async function getAnnouncements(
   limit?: number
 ): Promise<AnnouncementRow[]> {
   let query = supabase
     .from("announcements")
     .select("*")
-    .eq("published", true)
+    .eq("is_published", true)
     .order("created_at", { ascending: false });
 
   if (limit) query = query.limit(limit);
@@ -48,15 +42,15 @@ export interface EventLists {
 }
 
 /**
- * Returns all published events split into upcoming and past,
- * each sorted by starts_at ascending (upcoming) / descending (past).
- * Pass `upcomingLimit` to cap the upcoming list (e.g. homepage needs 3).
+ * Returns published events split into upcoming / past.
+ * Upcoming: sorted ascending. Past: most-recent first.
+ * `upcomingLimit` caps the upcoming slice (e.g. 3 for the homepage).
  */
 export async function getEvents(upcomingLimit?: number): Promise<EventLists> {
   const { data, error } = await supabase
     .from("events")
     .select("*")
-    .eq("published", true)
+    .eq("is_published", true)
     .order("starts_at", { ascending: true });
 
   if (error) {
@@ -71,7 +65,6 @@ export async function getEvents(upcomingLimit?: number): Promise<EventLists> {
     .filter((e) => new Date(e.starts_at) >= now)
     .slice(0, upcomingLimit ?? rows.length);
 
-  // Past events most-recent first
   const past = rows
     .filter((e) => new Date(e.starts_at) < now)
     .reverse();
@@ -83,15 +76,12 @@ export async function getEvents(upcomingLimit?: number): Promise<EventLists> {
 
 export type { ProjectRow };
 
-/**
- * Returns all published projects, newest first.
- * At most `limit` rows (default: all).
- */
+/** Returns published projects, newest first. */
 export async function getProjects(limit?: number): Promise<ProjectRow[]> {
   let query = supabase
     .from("projects")
     .select("*")
-    .eq("published", true)
+    .eq("is_published", true)
     .order("created_at", { ascending: false });
 
   if (limit) query = query.limit(limit);

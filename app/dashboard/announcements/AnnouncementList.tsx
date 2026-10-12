@@ -76,8 +76,8 @@ export default function AnnouncementList({
           {/* Badge + actions */}
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             <Badge
-              label={ann.published ? "Published" : "Draft"}
-              variant={ann.published ? "green" : "amber"}
+              label={ann.is_published ? "Published" : "Draft"}
+              variant={ann.is_published ? "green" : "amber"}
             />
             <EditButton href={`/dashboard/announcements/${ann.id}/edit`} />
             <ConfirmDelete

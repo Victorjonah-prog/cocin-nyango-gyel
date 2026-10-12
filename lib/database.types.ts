@@ -1,7 +1,7 @@
 /**
- * Minimal hand-written Database type matching the existing Supabase schema.
- * Must be structurally compatible with @supabase/supabase-js GenericSchema
- * so that typed query builders work correctly.
+ * Minimal hand-written Database type matching the live Supabase schema.
+ * Column names verified against actual table definitions.
+ * Must satisfy @supabase/supabase-js GenericSchema constraints.
  */
 export type Json =
   | string
@@ -22,9 +22,10 @@ export interface Database {
           body: string | null;
           category: string;
           image_url: string | null;
-          published: boolean;
+          is_published: boolean;
+          published_at: string | null;
+          created_by: string | null;
           created_at: string;
-          updated_at: string;
         };
         Insert: {
           id?: string;
@@ -33,9 +34,10 @@ export interface Database {
           body?: string | null;
           category: string;
           image_url?: string | null;
-          published?: boolean;
+          is_published?: boolean;
+          published_at?: string | null;
+          created_by?: string | null;
           created_at?: string;
-          updated_at?: string;
         };
         Update: {
           id?: string;
@@ -44,8 +46,9 @@ export interface Database {
           body?: string | null;
           category?: string;
           image_url?: string | null;
-          published?: boolean;
-          updated_at?: string;
+          is_published?: boolean;
+          published_at?: string | null;
+          created_by?: string | null;
         };
         Relationships: [];
       };
@@ -59,9 +62,9 @@ export interface Database {
           starts_at: string;
           ends_at: string | null;
           image_url: string | null;
-          published: boolean;
+          is_published: boolean;
+          created_by: string | null;
           created_at: string;
-          updated_at: string;
         };
         Insert: {
           id?: string;
@@ -72,9 +75,9 @@ export interface Database {
           starts_at: string;
           ends_at?: string | null;
           image_url?: string | null;
-          published?: boolean;
+          is_published?: boolean;
+          created_by?: string | null;
           created_at?: string;
-          updated_at?: string;
         };
         Update: {
           id?: string;
@@ -85,8 +88,8 @@ export interface Database {
           starts_at?: string;
           ends_at?: string | null;
           image_url?: string | null;
-          published?: boolean;
-          updated_at?: string;
+          is_published?: boolean;
+          created_by?: string | null;
         };
         Relationships: [];
       };
@@ -97,11 +100,11 @@ export interface Database {
           description: string | null;
           status: string;
           target_amount: number;
-          amount_raised: number;
+          raised_amount: number;
           image_url: string | null;
-          published: boolean;
+          is_published: boolean;
+          created_by: string | null;
           created_at: string;
-          updated_at: string;
         };
         Insert: {
           id?: string;
@@ -109,11 +112,11 @@ export interface Database {
           description?: string | null;
           status: string;
           target_amount: number;
-          amount_raised?: number;
+          raised_amount?: number;
           image_url?: string | null;
-          published?: boolean;
+          is_published?: boolean;
+          created_by?: string | null;
           created_at?: string;
-          updated_at?: string;
         };
         Update: {
           id?: string;
@@ -121,18 +124,18 @@ export interface Database {
           description?: string | null;
           status?: string;
           target_amount?: number;
-          amount_raised?: number;
+          raised_amount?: number;
           image_url?: string | null;
-          published?: boolean;
-          updated_at?: string;
+          is_published?: boolean;
+          created_by?: string | null;
         };
         Relationships: [];
       };
       profiles: {
         Row: {
-          id: string;           // matches auth.users.id
+          id: string;          // matches auth.users.id
           full_name: string | null;
-          role: string | null;  // "admin" | "secretary"
+          role: string | null; // "admin" | "secretary"
           created_at: string;
         };
         Insert: {

@@ -39,7 +39,7 @@ export default function AnnouncementForm({ initial }: Props) {
     (initial?.category as (typeof ANNOUNCEMENT_CATEGORIES)[number]) ?? "General"
   );
   const [imageUrl, setImageUrl] = useState<string | null>(initial?.image_url ?? null);
-  const [published, setPublished] = useState(initial?.published ?? false);
+  const [published, setPublished] = useState(initial?.is_published ?? false);
 
   // ── Validation errors ────────────────────────────────────────────────────
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -68,7 +68,7 @@ export default function AnnouncementForm({ initial }: Props) {
         body,
         category,
         image_url: imageUrl,
-        published,
+        is_published: published,
       });
       setResult(res);
       if (res.success) {
@@ -163,8 +163,7 @@ export default function AnnouncementForm({ initial }: Props) {
             ? "Saving…"
             : published
             ? "Publish announcement"
-            : "Save as draft"}
-        </DashButton>
+            : "Save as draft"}        </DashButton>
         <BackLink href="/dashboard/announcements" label="Cancel" />
       </div>
     </form>

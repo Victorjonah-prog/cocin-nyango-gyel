@@ -107,8 +107,8 @@ export default function EventList({ events }: { events: EventRow[] }) {
 
             <div className="flex flex-wrap items-center gap-2 shrink-0">
               <Badge
-                label={ev.published ? "Published" : "Draft"}
-                variant={ev.published ? "green" : "amber"}
+                label={ev.is_published ? "Published" : "Draft"}
+                variant={ev.is_published ? "green" : "amber"}
               />
               <EditButton href={`/dashboard/events/${ev.id}/edit`} />
               <ConfirmDelete

@@ -36,8 +36,7 @@ export async function saveAnnouncement(
     body: parsed.data.body || null,
     category: parsed.data.category,
     image_url: parsed.data.image_url || null,
-    published: parsed.data.published,
-    updated_at: new Date().toISOString(),
+    is_published: parsed.data.is_published,
   };
 
   if (id) {
@@ -48,14 +47,14 @@ export async function saveAnnouncement(
     if (error) return err("Could not save. Please try again.");
     revalidateAnnouncements();
     return ok(
-      parsed.data.published ? "Announcement published" : "Announcement saved"
+      parsed.data.is_published ? "Announcement published" : "Announcement saved"
     );
   } else {
     const { error } = await db.from("announcements").insert(payload);
     if (error) return err("Could not save. Please try again.");
     revalidateAnnouncements();
     return ok(
-      parsed.data.published
+      parsed.data.is_published
         ? "Announcement published"
         : "Announcement saved as draft"
     );

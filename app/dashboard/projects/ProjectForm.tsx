@@ -39,12 +39,12 @@ export default function ProjectForm({ initial }: Props) {
     initial?.target_amount != null ? String(initial.target_amount) : ""
   );
   const [amountRaised, setAmountRaised] = useState(
-    initial?.amount_raised != null ? String(initial.amount_raised) : "0"
+    initial?.raised_amount != null ? String(initial.raised_amount) : "0"
   );
   const [imageUrl, setImageUrl] = useState<string | null>(
     initial?.image_url ?? null
   );
-  const [published, setPublished] = useState(initial?.published ?? false);
+  const [published, setPublished] = useState(initial?.is_published ?? false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   function validate() {
@@ -85,9 +85,9 @@ export default function ProjectForm({ initial }: Props) {
         description,
         status,
         target_amount: Number(targetAmount),
-        amount_raised: Number(amountRaised),
+        raised_amount: Number(amountRaised),
         image_url: imageUrl,
-        published,
+        is_published: published,
       });
       setResult(res);
       if (res.success) {

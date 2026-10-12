@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { createServerClient } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/server";
 import { Megaphone, CalendarDays, FolderKanban } from "lucide-react";
 
 export const metadata: Metadata = { title: "Dashboard — COCIN Nyango Gyel" };
 
 async function getCounts() {
-  const db = createServerClient();
+  const db = await createClient();
 
   const [annRes, evRes, projRes] = await Promise.all([
     db.from("announcements").select("id", { count: "exact", head: true }),

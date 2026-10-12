@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 import { siteConfig, LOGO_PATH } from "@/lib/site";
 import LoginForm from "./LoginForm";
 
@@ -36,7 +37,9 @@ export default function LoginPage() {
         </div>
 
         {/* ── Auth form ── */}
-        <LoginForm />
+        <Suspense fallback={<div className="h-40 animate-pulse rounded-lg bg-gray-100" />}>
+          <LoginForm />
+        </Suspense>
 
         <p className="mt-6 text-center text-xs text-[var(--color-navy)]/50">
           &copy; {new Date().getFullYear()} {siteConfig.name}

@@ -27,7 +27,7 @@ function statusColor(status: string): string {
 
 function ProjectCard({ project }: { project: ProjectRow }) {
   const progressPct = project.target_amount > 0
-    ? Math.min(100, Math.round((project.amount_raised / project.target_amount) * 100))
+    ? Math.min(100, Math.round((project.raised_amount / project.target_amount) * 100))
     : 0;
 
   return (
@@ -70,7 +70,7 @@ function ProjectCard({ project }: { project: ProjectRow }) {
         <div className="space-y-2" aria-label={`Fundraising progress: ${progressPct}%`}>
           <div className="flex justify-between text-xs font-medium">
             <span className="text-[var(--color-navy)]">
-              Raised: <strong>{formatNGN(project.amount_raised)}</strong>
+              Raised: <strong>{formatNGN(project.raised_amount)}</strong>
             </span>
             <span className="text-[var(--color-muted)]">
               Goal: {formatNGN(project.target_amount)}

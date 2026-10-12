@@ -17,7 +17,7 @@ export const announcementSchema = z.object({
   body: z.string().max(10000).optional().or(z.literal("")),
   category: z.enum(ANNOUNCEMENT_CATEGORIES),
   image_url: z.string().url().optional().or(z.literal("")).or(z.null()),
-  published: z.boolean().default(false),
+  is_published: z.boolean().default(false),
 });
 
 export type AnnouncementFormData = z.infer<typeof announcementSchema>;
@@ -41,7 +41,7 @@ export const eventSchema = z
     starts_at: z.string().min(1, "Start date and time is required"),
     ends_at: z.string().optional().or(z.literal("")),
     image_url: z.string().url().optional().or(z.literal("")).or(z.null()),
-    published: z.boolean().default(false),
+    is_published: z.boolean().default(false),
   })
   .refine(
     (data) =>
@@ -69,13 +69,13 @@ export const projectSchema = z.object({
     .number({ invalid_type_error: "Enter a valid amount" })
     .nonnegative("Amount cannot be negative")
     .max(1_000_000_000, "Amount seems too large"),
-  amount_raised: z
+  raised_amount: z
     .number({ invalid_type_error: "Enter a valid amount" })
     .nonnegative("Amount cannot be negative")
     .max(1_000_000_000, "Amount seems too large")
     .default(0),
   image_url: z.string().url().optional().or(z.literal("")).or(z.null()),
-  published: z.boolean().default(false),
+  is_published: z.boolean().default(false),
 });
 
 export type ProjectFormData = z.infer<typeof projectSchema>;

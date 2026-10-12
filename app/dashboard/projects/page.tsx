@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { createServerClient } from "@/lib/supabase";
+import { createClient } from "@/lib/supabase/server";
 import { DashCard } from "@/components/dashboard/FormFields";
 import ProjectList from "./ProjectList";
 
 export const metadata: Metadata = { title: "Projects — Dashboard" };
 
 export default async function ProjectsIndexPage() {
-  const db = createServerClient();
+  const db = await createClient();
   const { data } = await db
     .from("projects")
     .select("*")

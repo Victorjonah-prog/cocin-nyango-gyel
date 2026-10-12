@@ -29,23 +29,22 @@ export async function saveProject(id: string | null, data: ProjectFormData) {
     description: parsed.data.description || null,
     status: parsed.data.status,
     target_amount: parsed.data.target_amount,
-    amount_raised: parsed.data.amount_raised,
+    raised_amount: parsed.data.raised_amount,
     image_url: parsed.data.image_url || null,
-    published: parsed.data.published,
-    updated_at: new Date().toISOString(),
+    is_published: parsed.data.is_published,
   };
 
   if (id) {
     const { error } = await db.from("projects").update(payload).eq("id", id);
     if (error) return err("Could not save. Please try again.");
     revalidateProjects();
-    return ok(parsed.data.published ? "Project published" : "Project saved");
+    return ok(parsed.data.is_published ? "Project published" : "Project saved");
   } else {
     const { error } = await db.from("projects").insert(payload);
     if (error) return err("Could not save. Please try again.");
     revalidateProjects();
     return ok(
-      parsed.data.published ? "Project published" : "Project saved as draft"
+      parsed.data.is_published ? "Project published" : "Project saved as draft"
     );
   }
 }

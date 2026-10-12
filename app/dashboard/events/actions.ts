@@ -32,21 +32,20 @@ export async function saveEvent(id: string | null, data: EventFormData) {
     starts_at: parsed.data.starts_at,
     ends_at: parsed.data.ends_at || null,
     image_url: parsed.data.image_url || null,
-    published: parsed.data.published,
-    updated_at: new Date().toISOString(),
+    is_published: parsed.data.is_published,
   };
 
   if (id) {
     const { error } = await db.from("events").update(payload).eq("id", id);
     if (error) return err("Could not save. Please try again.");
     revalidateEvents();
-    return ok(parsed.data.published ? "Event published" : "Event saved");
+    return ok(parsed.data.is_published ? "Event published" : "Event saved");
   } else {
     const { error } = await db.from("events").insert(payload);
     if (error) return err("Could not save. Please try again.");
     revalidateEvents();
     return ok(
-      parsed.data.published ? "Event published" : "Event saved as draft"
+      parsed.data.is_published ? "Event published" : "Event saved as draft"
     );
   }
 }

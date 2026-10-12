@@ -61,7 +61,7 @@ export default function ProjectList({ projects }: { projects: ProjectRow[] }) {
     <div className="flex flex-col gap-4">
       <StatusBanner result={result} />
       {projects.map((proj) => {
-        const pct = progressPct(proj.target_amount, proj.amount_raised);
+        const pct = progressPct(proj.target_amount, proj.raised_amount);
         return (
           <div
             key={proj.id}
@@ -79,8 +79,8 @@ export default function ProjectList({ projects }: { projects: ProjectRow[] }) {
                     variant={statusVariant(proj.status)}
                   />
                   <Badge
-                    label={proj.published ? "Published" : "Draft"}
-                    variant={proj.published ? "green" : "amber"}
+                    label={proj.is_published ? "Published" : "Draft"}
+                    variant={proj.is_published ? "green" : "amber"}
                   />
                 </div>
               </div>
@@ -98,7 +98,7 @@ export default function ProjectList({ projects }: { projects: ProjectRow[] }) {
             <div>
               <div className="flex justify-between text-sm text-[var(--color-muted)] mb-1">
                 <span>
-                  {formatNaira(proj.amount_raised)} raised of{" "}
+                  {formatNaira(proj.raised_amount)} raised of{" "}
                   {formatNaira(proj.target_amount)}
                 </span>
                 <span className="font-semibold text-[var(--color-navy)]">
