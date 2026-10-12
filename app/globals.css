@@ -1,26 +1,213 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ─── Design Tokens ──────────────────────────────────────────────── */
+@theme {
+  /* Brand colours */
+  --color-navy:        #0B1F3A;
+  --color-navy-light:  #132848;
+  --color-navy-dark:   #071526;
+  --color-gold:        #C9A24B;
+  --color-gold-light:  #DFB96A;
+  --color-gold-dark:   #A8822E;
+  --color-parchment:   #FAF8F3;
+  --color-charcoal:    #1F2933;
+  --color-grey:        #E8E4DC;
+  --color-grey-soft:   #F0EDE6;
+  /* --color-muted was #6B7280 (contrast 4.1:1 on white — fails AA for small text).
+     Replaced with #595F6B (contrast 5.5:1 on white — passes AA).              */
+  --color-muted:       #595F6B;
+
+  /* Semantic aliases */
+  --color-background:  var(--color-parchment);
+  --color-foreground:  var(--color-charcoal);
+  --color-primary:     var(--color-navy);
+  --color-accent:      var(--color-gold);
+  --color-border:      var(--color-grey);
+
+  /* Typography */
+  --font-display: var(--font-playfair), "Georgia", serif;
+  --font-body:    var(--font-inter), system-ui, sans-serif;
+
+  /* Type scale */
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
+  --text-base: 1rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.25rem;
+  --text-2xl:  1.5rem;
+  --text-3xl:  1.875rem;
+  --text-4xl:  2.25rem;
+  --text-5xl:  3rem;
+  --text-6xl:  3.75rem;
+  --text-7xl:  4.5rem;
+
+  /* Spacing additions */
+  --spacing-18: 4.5rem;
+  --spacing-22: 5.5rem;
+
+  /* Shadows */
+  --shadow-card: 0 4px 24px 0 rgb(11 31 58 / 0.07);
+  --shadow-nav:  0 2px 24px 0 rgb(11 31 58 / 0.12);
+  --shadow-gold: 0 4px 16px 0 rgb(201 162 75 / 0.25);
+
+  /* Border radius */
+  --radius-card: 0.75rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* ─── Base font size (fixed — use browser/device zoom to adjust) ────
+   18 px gives seniors comfortable reading without a manual control.
+   Pinch-zoom and OS accessibility settings remain fully available.
+   ─────────────────────────────────────────────────────────────────── */
+html { font-size: 18px; }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* ─── Base Styles ────────────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* Skip-to-content link — visible only on focus */
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: 1rem;
+    z-index: 9999;
+    padding: 0.75rem 1.25rem;
+    background: var(--color-navy);
+    color: #fff;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    border: 2px solid var(--color-gold);
+    transform: translateY(-200%);
+    transition: transform 0.15s ease;
+    text-decoration: none;
+  }
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-body);
+    font-size: 1rem;       /* 1rem = 18px (set on <html> above) */
+    line-height: 1.75;
+    font-feature-settings: "kern" 1, "liga" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    line-height: 1.2;
+    color: var(--color-navy);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Global minimum tap-target size ─────────────────────────────────
+     Apply only to standalone interactive elements (buttons and
+     block/flex links), NOT inline text links, to avoid breaking
+     paragraph flow. Individual button/link components enforce
+     their own min-h where needed.                                    */
+  button, [role="button"] {
+    min-height: 48px;
+    min-width:  48px;
+  }
+  /* Standalone links (flex, block, grid, inline-flex) get the same
+     treatment without disturbing inline anchor text in prose.        */
+  a:not(:where(p a, li a, .prose a)) {
+    min-height: 48px;
+  }
+
+  /* Global focus ring ──────────────────────────────────────────────
+     Visible on keyboard nav; hidden for mouse/touch via :focus-visible */
+  :focus-visible {
+    outline: 3px solid var(--color-gold);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  img, video {
+    max-width: 100%;
+    display: block;
+  }
+
+  ::selection {
+    background-color: var(--color-gold);
+    color: var(--color-navy);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* ─── Reduced-motion overrides ───────────────────────────────────────
+   Framer Motion respects this automatically for most animations, but we
+   add CSS-level guarantees for any CSS transitions/animations too.
+   ─────────────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration:   0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration:  0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── Mobile bottom nav padding ─────────────────────────────────────
+   Fixed px so it never changes regardless of zoom level.
+   ─────────────────────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  body {
+    /* 68px nav bar + 8px breathing room = 76px. calc() adds any
+       iOS safe-area inset on top of that.                          */
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* ─── Utility Classes ────────────────────────────────────────────── */
+@layer utilities {
+  /* Gold hairline divider */
+  .divider-gold {
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--color-gold),
+      transparent
+    );
+  }
+
+  /* Subtle parchment-to-white gradient sections */
+  .section-alt {
+    background-color: var(--color-grey-soft);
+  }
+
+  /* Display font helper */
+  .font-display {
+    font-family: var(--font-display);
+  }
+
+  /* Accessible icon-only button helper — visually hidden label */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
 }

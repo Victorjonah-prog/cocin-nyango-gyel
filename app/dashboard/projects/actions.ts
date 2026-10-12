@@ -1,0 +1,59 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { createServerClient } from "@/lib/supabase";
+import { projectSchema, type ProjectFormData } from "@/lib/schemas";
+
+function ok(message: string) {
+  return { success: true as const, message };
+}
+function err(message: string) {
+  return { success: false as const, message };
+}
+
+function revalidateProjects() {
+  revalidatePath("/projects");
+  revalidatePath("/");
+  revalidatePath("/dashboard/projects");
+}
+
+export async function saveProject(id: string | null, data: ProjectFormData) {
+  const parsed = projectSchema.safeParse(data);
+  if (!parsed.success) {
+    return err(parsed.error.errors[0]?.message ?? "Validation failed");
+  }
+
+  const db = createServerClient();
+  const payload = {
+    title: parsed.data.title,
+    description: parsed.data.description || null,
+    status: parsed.data.status,
+    target_amount: parsed.data.target_amount,
+    amount_raised: parsed.data.amount_raised,
+    image_url: parsed.data.image_url || null,
+    published: parsed.data.published,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (id) {
+    const { error } = await db.from("projects").update(payload).eq("id", id);
+    if (error) return err("Could not save. Please try again.");
+    revalidateProjects();
+    return ok(parsed.data.published ? "Project published" : "Project saved");
+  } else {
+    const { error } = await db.from("projects").insert(payload);
+    if (error) return err("Could not save. Please try again.");
+    revalidateProjects();
+    return ok(
+      parsed.data.published ? "Project published" : "Project saved as draft"
+    );
+  }
+}
+
+export async function deleteProject(id: string) {
+  const db = createServerClient();
+  const { error } = await db.from("projects").delete().eq("id", id);
+  if (error) return err("Could not delete. Please try again.");
+  revalidateProjects();
+  return ok("Project deleted");
+}
